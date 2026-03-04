@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Product</div></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <a class="pill" href="/">Store</a>
+    <a class="pill" href="/wishlist">❤️ Wishlist</a>
+    <a class="pill" href="/cart">🛒 Cart <b>{{ cart_count }}</b></a>
+  </div>
+</div>
+
+<div class="hero two-col">
+  <div class="gallery">
+    <img id="mainImage" class="mainimg" src="{{ url_for('static', filename=imgs[0].image_path) }}">
+    <div class="thumbrow">
+      {% for im in imgs %}
+        <img class="thumb" src="{{ url_for('static', filename=im.image_path) }}" onclick="setMainImage(this.src)">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card" style="padding:14px;">
+    <div class="row">
+      <div>
+        <h1 style="margin:0 0 6px;">{{ p.name }}</h1>
+        <div class="muted">{{ p.category }} • ⭐ {{ "%.1f"|format(p.rating) }} • Stock: {{ p.stock }}</div>
+      </div>
+      <form method="post" action="/wishlist/toggle/{{ p.id }}">
+        <button class="heart {% if in_wishlist %}on{% endif %}" type="submit">{% if in_wishlist %}♥{% else %}♡{% endif %}</button>
+      </form>
+    </div>
+
+    <div style="margin-top:10px; font-size:26px; font-weight:1000;">
+      ₹{{ p.discount_price if p.discount_price else p.price }}
+      {% if p.discount_price %}<span class="muted" style="font-size:14px;">(MRP ₹{{ p.price }})</span>{% endif %}
+    </div>
+
+    <p class="muted" style="margin-top:10px;">{{ p.description }}</p>
+
+    <form method="post" action="/add/{{ p.id }}" style="margin-top:12px;">
+      <label class="muted">Size</label>
+      <select class="input" name="size">
+        {% for s in p.sizes.split(",") %}
+          <option value="{{ s.strip() }}">{{ s.strip() }}</option>
+        {% endfor %}
+      </select>
+
+      <label class="muted">Color</label>
+      <select class="input" name="color">
+        {% for c in p.colors.split(",") %}
+          <option value="{{ c.strip() }}">{{ c.strip() }}</option>
+        {% endfor %}
+      </select>
+
+      <button class="btn btn-primary" style="width:100%; margin-top:10px;" {% if p.stock<=0 %}disabled{% endif %}>
+        Add to Cart
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

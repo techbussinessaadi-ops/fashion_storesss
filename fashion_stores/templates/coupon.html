@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Admin • Coupons</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/admin">Dashboard</a>
+    <a class="pill" href="/admin/products">Products</a>
+    <a class="pill" href="/admin/orders">Orders</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Create Coupon</h1>
+  <p class="muted">Percent or Flat. Add expiry (YYYY-MM-DD) optional.</p>
+  <form method="post" class="tools">
+    <input class="input" name="code" placeholder="CODE (SAVE10)" required>
+    <select class="input" name="kind">
+      <option value="PERCENT">PERCENT</option>
+      <option value="FLAT">FLAT</option>
+    </select>
+    <input class="input" name="value" placeholder="Value (10 or 50)" required>
+    <input class="input" name="min_total" placeholder="Min total (optional)" value="0">
+    <input class="input" name="usage_limit" placeholder="Usage limit" value="1000">
+    <input class="input" name="expiry" placeholder="Expiry YYYY-MM-DD (optional)">
+    <label class="pill"><input type="checkbox" name="active" checked> Active</label>
+    <button class="btn btn-primary" type="submit">Create</button>
+  </form>
+</div>
+
+<div class="card" style="margin-top:14px; padding:12px;">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Type</th>
+        <th class="right">Value</th>
+        <th class="right">Min</th>
+        <th class="right">Used</th>
+        <th>Expiry</th>
+        <th>Status</th>
+        <th class="right">Toggle</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in coupons %}
+      <tr>
+        <td><b>{{ c.code }}</b></td>
+        <td>{{ c.kind }}</td>
+        <td class="right">{{ c.value }}</td>
+        <td class="right">₹{{ c.min_total }}</td>
+        <td class="right">{{ c.used_count }}/{{ c.usage_limit }}</td>
+        <td>{{ c.expiry or "-" }}</td>
+        <td><span class="pill">{{ "Active" if c.active else "Off" }}</span></td>
+        <td class="right">
+          <form method="post" action="/admin/coupons/toggle/{{ c.id }}">
+            <button class="btn btn-ghost" type="submit">Toggle</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

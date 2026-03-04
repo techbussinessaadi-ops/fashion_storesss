@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Manoj Premium Fashion</div></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <a class="pill" href="/profile">👤 Profile</a>
+    <a class="pill" href="/orders">📦 Orders</a>
+    <a class="pill" href="/wishlist">❤️ Wishlist</a>
+    {% if user and user.is_admin %}<a class="pill" href="/admin">Admin</a>{% endif %}
+    <a class="pill" href="/cart">🛒 Cart <b>{{ cart_count }}</b></a>
+    <a class="pill" href="/logout">Logout</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>{% if wishlist_only %}Wishlist ❤️{% else %}Premium Clothing Store ✨{% endif %}</h1>
+  <p>{% if wishlist_only %}Your saved items.{% else %}Search, filter, sort — then checkout like real e-commerce.{% endif %}</p>
+
+  {% if not wishlist_only %}
+  <form class="tools" method="get" action="/">
+    <input class="input" name="q" placeholder="Search (hoodie, shirt...)" value="{{ q }}">
+    <select class="input" name="cat">
+      <option value="">All Categories</option>
+      {% for c in categories %}
+        <option value="{{ c }}" {% if c==active_cat %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+    <select class="input" name="sort">
+      <option value="new" {% if sort=="new" %}selected{% endif %}>Newest</option>
+      <option value="rating" {% if sort=="rating" %}selected{% endif %}>Top Rated</option>
+      <option value="price_low" {% if sort=="price_low" %}selected{% endif %}>Price: Low</option>
+      <option value="price_high" {% if sort=="price_high" %}selected{% endif %}>Price: High</option>
+    </select>
+
+    <input class="input" name="minp" placeholder="Min ₹" value="{{ minp }}">
+    <input class="input" name="maxp" placeholder="Max ₹" value="{{ maxp }}">
+    <input class="input" name="minr" placeholder="Min Rating (e.g. 4.0)" value="{{ minr }}">
+
+    <label class="pill" style="cursor:pointer;">
+      <input type="checkbox" name="in_stock" value="1" {% if in_stock=="1" %}checked{% endif %}>
+      In-stock only
+    </label>
+
+    <button class="btn btn-primary" type="submit">Apply</button>
+    <a class="btn btn-ghost" href="/">Reset</a>
+  </form>
+  {% endif %}
+</div>
+
+<div class="grid">
+  {% for c in cards %}
+  <div class="card">
+    <a href="/product/{{ c.p.id }}">
+      <img src="{{ url_for('static', filename=c.img) }}" alt="{{ c.p.name }}">
+    </a>
+    <div class="card-body">
+      <div class="row">
+        <div class="title">{{ c.p.name }}</div>
+        <div class="price">₹{{ c.effective_price }}</div>
+      </div>
+      <div class="row" style="margin-top:6px;">
+        <div class="muted">{{ c.p.category }} • ⭐ {{ "%.1f"|format(c.p.rating) }} • Stock: {{ c.p.stock }}</div>
+        {% if c.p.badge %}<div class="badge">{{ c.p.badge }}</div>{% endif %}
+      </div>
+
+      <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
+        <form method="post" action="/wishlist/toggle/{{ c.p.id }}">
+          <button class="heart {% if c.in_wishlist %}on{% endif %}" type="submit">{% if c.in_wishlist %}♥{% else %}♡{% endif %}</button>
+        </form>
+
+        <a class="btn btn-ghost" style="flex:1; text-align:center;" href="/product/{{ c.p.id }}">View</a>
+
+        <form style="flex:1;" method="post" action="/add/{{ c.p.id }}">
+          <input type="hidden" name="size" value="M">
+          <input type="hidden" name="color" value="Black">
+          <button class="btn btn-primary" style="width:100%;" {% if c.p.stock<=0 %}disabled{% endif %}>
+            Add
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if pagination %}
+<div class="pagination">
+  {% if pagination.has_prev %}
+    <a class="pill" href="{{ url_for('store', page=pagination.prev_num, q=q, cat=active_cat, sort=sort, in_stock=in_stock, minp=minp, maxp=maxp, minr=minr) }}">← Prev</a>
+  {% endif %}
+  <span class="pill">Page <b>{{ pagination.page }}</b> / {{ pagination.pages }}</span>
+  {% if pagination.has_next %}
+    <a class="pill" href="{{ url_for('store', page=pagination.next_num, q=q, cat=active_cat, sort=sort, in_stock=in_stock, minp=minp, maxp=maxp, minr=minr) }}">Next →</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

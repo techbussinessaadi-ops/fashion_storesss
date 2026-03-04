@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Admin Panel</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/admin/products">Products</a>
+    <a class="pill" href="/admin/coupons">Coupons</a>
+    <a class="pill" href="/admin/orders">Orders</a>
+    <a class="pill" href="/">Store</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Dashboard</h1>
+  <p class="muted">Stats + revenue chart + low stock warning.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+    <div class="pill">Products: <b>{{ product_count }}</b></div>
+    <div class="pill">Orders: <b>{{ order_count }}</b></div>
+    <div class="pill">Pending: <b>{{ pending }}</b></div>
+    <div class="pill">Low Stock (≤5): <b>{{ low_stock }}</b></div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px; padding:14px;">
+  <div class="title">Revenue (Last 7 days)</div>
+  <canvas id="revChart" height="90"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = {{ days|tojson }};
+const data = {{ revenue|tojson }};
+new Chart(document.getElementById('revChart'), {
+  type: 'line',
+  data: { labels, datasets: [{ label:'Revenue', data }] },
+  options: { responsive:true, plugins:{legend:{display:true}} }
+});
+</script>
+{% endblock %}

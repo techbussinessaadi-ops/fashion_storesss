@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Profile</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/">Store</a>
+    <a class="pill" href="/orders">Orders</a>
+    <a class="pill" href="/logout">Logout</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Your Profile</h1>
+  <p class="muted">These details auto-fill checkout.</p>
+</div>
+
+<div class="card" style="margin-top:14px; padding:14px;">
+  <form method="post">
+    <input class="input" name="full_name" placeholder="Full Name" value="{{ user.full_name or '' }}">
+    <input class="input" name="phone" placeholder="Phone" value="{{ user.phone or '' }}">
+    <input class="input" name="address" placeholder="Address" value="{{ user.address or '' }}">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input class="input" name="city" placeholder="City" value="{{ user.city or '' }}">
+      <input class="input" name="pincode" placeholder="Pincode" value="{{ user.pincode or '' }}">
+    </div>
+    <button class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button>
+  </form>
+</div>
+{% endblock %}

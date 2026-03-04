@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Admin • Orders</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/admin">Dashboard</a>
+    <a class="pill" href="/admin/products">Products</a>
+    <a class="pill" href="/admin/coupons">Coupons</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Orders</h1>
+  <p class="muted">Update status: Pending / Shipped / Delivered.</p>
+</div>
+
+<div class="card" style="margin-top:14px; padding:12px;">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Customer</th>
+        <th class="right">Total</th>
+        <th>Status</th>
+        <th class="right">Update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>#{{ o.id }}</td>
+        <td>
+          <div class="title">{{ o.full_name }}</div>
+          <div class="muted">{{ o.phone }} • {{ o.city }} • {{ o.pincode }}</div>
+          <div class="muted">{{ o.address }}</div>
+          <div class="muted">Subtotal ₹{{ o.subtotal }} • Discount ₹{{ o.discount }} {% if o.coupon_code %}• Coupon {{ o.coupon_code }}{% endif %}</div>
+        </td>
+        <td class="right"><b>₹{{ o.total_amount }}</b></td>
+        <td><span class="pill">{{ o.status }}</span></td>
+        <td class="right">
+          <form method="post" action="/admin/orders/status/{{ o.id }}">
+            <select class="input" name="status">
+              <option {% if o.status=="Pending" %}selected{% endif %}>Pending</option>
+              <option {% if o.status=="Shipped" %}selected{% endif %}>Shipped</option>
+              <option {% if o.status=="Delivered" %}selected{% endif %}>Delivered</option>
+            </select>
+            <button class="btn btn-primary" style="margin-top:8px;width:100%;">Save</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Admin • {{ "Edit" if p else "New" }} Product</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/admin/products">Back</a>
+    <a class="pill" href="/admin">Dashboard</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>{{ "Edit Product" if p else "Add Product" }}</h1>
+  <p class="muted">Upload multiple images (first upload becomes primary).</p>
+</div>
+
+{% if p %}
+<div class="card" style="margin-top:14px; padding:14px;">
+  <div class="title">Images</div>
+  <div class="thumbrow" style="margin-top:10px;">
+    {% for im in imgs %}
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+        <img class="thumb" src="{{ url_for('static', filename=im.image_path) }}">
+        <form method="post" action="/admin/products/img/{{ im.id }}/primary">
+          <button class="btn btn-ghost" type="submit">{% if im.is_primary %}Primary ✅{% else %}Make Primary{% endif %}</button>
+        </form>
+        <form method="post" action="/admin/products/img/{{ im.id }}/delete" onsubmit="return confirm('Delete image?')">
+          <button class="btn btn-danger" type="submit">Delete</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="card" style="margin-top:14px; padding:14px;">
+  <form method="post" enctype="multipart/form-data">
+    <input class="input" name="name" placeholder="Product name" value="{{ p.name if p else '' }}" required>
+    <input class="input" name="category" placeholder="Category" value="{{ p.category if p else '' }}" required>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input class="input" name="price" placeholder="Price" value="{{ p.price if p else '' }}" required>
+      <input class="input" name="discount_price" placeholder="Discount price (optional)" value="{{ p.discount_price if p and p.discount_price else '' }}">
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input class="input" name="stock" placeholder="Stock" value="{{ p.stock if p else '10' }}" required>
+      <input class="input" name="rating" placeholder="Rating (4.5)" value="{{ p.rating if p else '4.3' }}" required>
+    </div>
+
+    <input class="input" name="sizes" placeholder="Sizes (S,M,L,XL)" value="{{ p.sizes if p else 'S,M,L,XL' }}" required>
+    <input class="input" name="colors" placeholder="Colors (Black,White,Navy)" value="{{ p.colors if p else 'Black,White,Navy' }}" required>
+    <input class="input" name="badge" placeholder="Badge (New/Hot/Best optional)" value="{{ p.badge if p and p.badge else '' }}">
+    <textarea class="input" name="description" placeholder="Description" style="min-height:120px;">{{ p.description if p else '' }}</textarea>
+
+    <div class="muted" style="margin-top:8px;">Upload images (png/jpg/jpeg/webp):</div>
+    <input class="input" type="file" name="images" multiple>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:10px;">Save</button>
+  </form>
+</div>
+{% endblock %}

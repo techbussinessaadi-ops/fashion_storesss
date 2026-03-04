@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Checkout</div></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <a class="pill" href="/cart">← Back to Cart</a>
+    <a class="pill" href="/">Store</a>
+  </div>
+</div>
+
+<div class="hero two-col">
+  <div class="card" style="padding:14px;">
+    <h1 style="margin:0 0 6px;">Delivery Details</h1>
+    <p class="muted">Fill address. Apply coupon (optional). Place order.</p>
+
+    <form method="post" style="margin-top:10px;">
+      <input type="hidden" name="action" value="place">
+
+      <input class="input" name="full_name" placeholder="Full Name" value="{{ pref.full_name }}" required>
+      <input class="input" name="phone" placeholder="Phone" value="{{ pref.phone }}" required>
+      <input class="input" name="address" placeholder="Full Address" value="{{ pref.address }}" required>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input class="input" name="city" placeholder="City" value="{{ pref.city }}" required>
+        <input class="input" name="pincode" placeholder="Pincode" value="{{ pref.pincode }}" required>
+      </div>
+
+      <select class="input" name="payment">
+        <option value="COD">Cash on Delivery</option>
+        <option value="DemoCard">Demo Card</option>
+      </select>
+
+      <button class="btn btn-primary" style="width:100%;margin-top:10px;">Place Order</button>
+    </form>
+  </div>
+
+  <div class="card" style="padding:14px;">
+    <h1 style="margin:0 0 6px;">Order Summary</h1>
+
+    <form method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+      <input type="hidden" name="action" value="apply_coupon">
+      <input class="input" name="coupon" placeholder="Coupon (SAVE10 / FLAT50)" value="{{ coupon }}">
+      <button class="btn btn-ghost" type="submit">Apply</button>
+    </form>
+
+    <div style="margin-top:12px;">
+      {% for r in rows %}
+        <div class="row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+          <div class="muted">{{ r.product.name }} × {{ r.item.qty }} ({{ r.item.size }}, {{ r.item.color }})</div>
+          <div><b>₹{{ r.line }}</b></div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div style="margin-top:12px; display:grid; gap:8px;">
+      <div class="pill">Subtotal: <b>₹{{ subtotal }}</b></div>
+      <div class="pill">Discount: <b>-₹{{ discount }}</b></div>
+      <div class="pill">Payable: <b>₹{{ total }}</b></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

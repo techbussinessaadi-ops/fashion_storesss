@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth">
+    <div class="brand" style="margin-bottom:10px;"><div class="logo"></div><div>Manoj Premium Fashion</div></div>
+    <h2>Create Account 🚀</h2>
+    <div class="muted">Register to shop.</div>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <form method="post" style="margin-top:14px;">
+      <input class="input" name="username" placeholder="Username" required>
+      <input class="input" type="password" name="password" placeholder="Password" required>
+      <button class="btn btn-primary" style="width:100%;margin-top:10px;">Register</button>
+    </form>
+    <div style="margin-top:12px;">
+      <a href="/login">Back to login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Admin • Products</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/admin">Dashboard</a>
+    <a class="pill" href="/admin/orders">Orders</a>
+    <a class="pill" href="/admin/coupons">Coupons</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="row">
+    <div>
+      <h1 style="margin:0 0 6px;">Products</h1>
+      <p class="muted">Add / edit / delete and upload multiple images.</p>
+    </div>
+    <a class="btn btn-primary" href="/admin/products/new">+ Add Product</a>
+  </div>
+</div>
+
+<div class="card" style="margin-top:14px; padding:12px;">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th class="right">Price</th>
+        <th class="right">Stock</th>
+        <th class="right">Edit</th>
+        <th class="right">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <img src="{{ url_for('static', filename=r.img) }}" style="width:56px;height:56px;border-radius:12px;object-fit:cover;">
+            <div>
+              <div class="title">{{ r.p.name }}</div>
+              <div class="muted">{{ r.p.category }} • ⭐ {{ "%.1f"|format(r.p.rating) }}</div>
+            </div>
+          </div>
+        </td>
+        <td class="right">₹{{ r.p.discount_price if r.p.discount_price else r.p.price }}</td>
+        <td class="right">{{ r.p.stock }}</td>
+        <td class="right"><a class="pill" href="/admin/products/edit/{{ r.p.id }}">Edit</a></td>
+        <td class="right">
+          <form method="post" action="/admin/products/delete/{{ r.p.id }}" onsubmit="return confirm('Delete product?')">
+            <button class="btn btn-danger" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

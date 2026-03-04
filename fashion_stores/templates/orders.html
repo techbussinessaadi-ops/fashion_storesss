@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>My Orders</div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="pill" href="/">Store</a>
+    <a class="pill" href="/profile">Profile</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Order History</h1>
+  <p class="muted">Your recent orders.</p>
+</div>
+
+{% if data|length == 0 %}
+  <div class="hero"><div class="muted">No orders yet.</div></div>
+{% endif %}
+
+{% for o, items in data %}
+<div class="card" style="margin-top:14px; padding:14px;">
+  <div class="row">
+    <div>
+      <div class="title">Order #{{ o.id }} • {{ o.status }}</div>
+      <div class="muted">{{ o.created_at.strftime("%d %b %Y, %I:%M %p") }}</div>
+      {% if o.coupon_code %}<div class="muted">Coupon: {{ o.coupon_code }}</div>{% endif %}
+    </div>
+    <div class="pill">Total: <b>₹{{ o.total_amount }}</b></div>
+  </div>
+
+  <div style="margin-top:12px;">
+    {% for it in items %}
+      <div class="row" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+        <div class="muted">{{ it.product_name }} × {{ it.qty }} ({{ it.size }}, {{ it.color }})</div>
+        <div><b>₹{{ it.line_total }}</b></div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

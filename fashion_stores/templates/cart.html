@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="nav">
+  <div class="brand"><div class="logo"></div><div>Your Cart</div></div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <a class="pill" href="/">← Continue Shopping</a>
+    <a class="pill" href="/checkout">Checkout</a>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Cart Summary 🛒</h1>
+  <p class="muted">Quantity change, remove items, then checkout.</p>
+</div>
+
+<div class="card" style="margin-top:14px; padding:12px;">
+  {% if rows|length == 0 %}
+    <div class="muted">Cart empty. <a href="/">Shop now</a></div>
+  {% else %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th class="right">Unit</th>
+          <th class="right">Qty</th>
+          <th class="right">Line Total</th>
+          <th class="right">Remove</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <img src="{{ url_for('static', filename=r.img) }}" style="width:56px;height:56px;border-radius:12px;object-fit:cover;">
+              <div>
+                <div class="title">{{ r.product.name }}</div>
+                <div class="muted">{{ r.item.size }} • {{ r.item.color }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="right">₹{{ r.unit }}</td>
+          <td class="right">
+            <div class="qty">
+              <form method="post" action="/qty/{{ r.item.id }}">
+                <input type="hidden" name="action" value="minus">
+                <button class="small-btn" type="submit">−</button>
+              </form>
+              <b>{{ r.item.qty }}</b>
+              <form method="post" action="/qty/{{ r.item.id }}">
+                <input type="hidden" name="action" value="plus">
+                <button class="small-btn" type="submit">+</button>
+              </form>
+            </div>
+          </td>
+          <td class="right"><b>₹{{ r.line }}</b></td>
+          <td class="right">
+            <form method="post" action="/remove/{{ r.item.id }}">
+              <button class="btn btn-danger" type="submit">Remove</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:14px;">
+      <form method="post" action="/clear">
+        <button class="btn btn-ghost" type="submit">Clear Cart</button>
+      </form>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="pill">Subtotal: <b>₹{{ subtotal }}</b></div>
+        <a class="btn btn-primary" href="/checkout">Checkout</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
